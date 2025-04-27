@@ -216,8 +216,68 @@ button.bg-gray-300:hover {
     display: inline-block;
 }
 
+.status-present {
+    background: #d1fae5;
+    color: #065f46;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.status-absent {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.status-completed {
+    background: #d1fae5;
+    color: #065f46;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.status-pending {
+    background: #fef3c7;
+    color: #92400e;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.status-refunded {
+    background: #f3e8ff;
+    color: #6b21a8;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.status-canceled {
+    background: #e5e7eb;
+    color: #4b5563;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
 /* Modals */
-#add-product-modal, #view-product-modal, #view-invoice-modal, #add-customer-modal, #view-customer-modal {
+#add-product-modal, #view-product-modal, #view-invoice-modal, #add-customer-modal, #view-customer-modal, #add-employee-modal, #view-profile-modal {
     z-index: 1000;
     animation: fadeIn 0.3s ease;
 }
@@ -227,7 +287,7 @@ button.bg-gray-300:hover {
     to { opacity: 1; transform: scale(1); }
 }
 
-#add-product-modal .card, #view-product-modal .card, #view-invoice-modal .card, #add-customer-modal .card, #view-customer-modal .card {
+#add-product-modal .card, #view-product-modal .card, #view-invoice-modal .card, #add-customer-modal .card, #view-customer-modal .card, #add-employee-modal .card, #view-profile-modal .card {
     border: 1px solid #e5e7eb;
 }
 
@@ -254,6 +314,35 @@ button.bg-gray-300:hover {
 }
 
 .sales-metric p {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-top: 0.5rem;
+}
+
+/* Employee Metrics */
+.employee-metric {
+    background: linear-gradient(135deg, #f9fafb, #e5e7eb);
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.employee-metric:hover {
+    transform: translateY(-3px);
+}
+
+.employee-metric h3 {
+    font-size: 0.9rem;
+    color: #6b7280;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.employee-metric p {
     font-size: 1.75rem;
     font-weight: 700;
     color: #1e3a8a;
@@ -305,19 +394,35 @@ button.bg-gray-300:hover {
 }
 
 .dropdown-menu a:hover {
-    background: #f3f4f6;
-    color: #1e3a8a;
+    background: #f1f5f9;
 }
 
 .dropdown-menu a svg {
-    margin-right: 0.5rem;
     width: 1rem;
     height: 1rem;
+    margin-right: 0.5rem;
 }
 
 @keyframes slideDown {
     from { opacity: 0; transform: translateY(-5px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* Search and Filter Controls */
+.search-container {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.search-container input {
+    flex: 1;
+    max-width: 300px;
+}
+
+.search-container select {
+    width: 200px;
 }
 
 /* Charts and Performance Bars */
@@ -372,11 +477,11 @@ canvas {
         font-size: 1rem;
     }
 
-    .sales-metric {
+    .sales-metric, .employee-metric {
         padding: 1rem;
     }
 
-    .sales-metric p {
+    .sales-metric p, .employee-metric p {
         font-size: 1.5rem;
     }
 
@@ -387,4 +492,118 @@ canvas {
     th, td {
         padding: 0.5rem;
     }
+
+    .search-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-container input, .search-container select {
+        max-width: 100%;
+        width: 100%;
+    }
+}
+
+/* Analytics Styles */
+.analytics-submenu {
+    transition: all 0.3s ease;
+    overflow: hidden;
+    max-height: 0;
+}
+
+.analytics-submenu:not(.hidden) {
+    max-height: 200px;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.analytics-nav-item {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+.analytics-nav-item:hover {
+    opacity: 1;
+    transform: translateX(3px);
+}
+
+.analytics-nav-item.active {
+    font-weight: 600;
+    opacity: 1;
+}
+
+.analytics-content {
+    transition: opacity 0.3s ease;
+}
+
+.analytics-content.hidden {
+    display: none;
+}
+
+/* Analytics Tabs */
+.analytics-nav-item {
+    cursor: pointer;
+    padding: 0.75rem 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.analytics-nav-item:hover {
+    color: #3b82f6;
+}
+
+.analytics-nav-item.active {
+    color: #3b82f6;
+    border-bottom: 2px solid #3b82f6;
+}
+
+/* Chart containers */
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
+
+/* Analytics Charts */
+#monthly-sales-chart, 
+#top-products-chart,
+#category-chart, 
+#stock-levels-chart,
+#customer-growth-chart, 
+#top-customers-chart, 
+#age-distribution-chart {
+    height: 240px !important;
+    max-height: 240px;
+}
+
+.analytics-content .card {
+    padding: 1rem;
+}
+
+.analytics-content .grid {
+    margin-bottom: 1rem;
+}
+
+/* Make the analytics section more compact */
+.analytics-content h3.text-xl {
+    margin-bottom: 0.5rem;
+}
+
+.analytics-content p.text-gray-600 {
+    margin-bottom: 1rem;
+}
+
+.analytics-content .grid.grid-cols-3 {
+    gap: 1rem;
+}
+
+.analytics-content .bg-white p-6 {
+    padding: 1rem;
+}
+
+/* Prevent chart overflow */
+.analytics-content canvas {
+    max-width: 100%;
+    padding: 0.5rem;
 }

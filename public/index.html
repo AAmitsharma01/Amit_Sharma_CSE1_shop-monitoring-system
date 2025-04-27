@@ -83,6 +83,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop Monitoring System</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
@@ -99,8 +100,20 @@
                 <a href="#sales" class="block px-4 py-2 rounded-lg hover:bg-blue-700 nav-link" data-section="sales-section">Sales</a>
                 <a href="#customers" class="block px-4 py-2 rounded-lg hover:bg-blue-700 nav-link" data-section="customers-section">Customers</a>
                 <a href="#employees" class="block px-4 py-2 rounded-lg hover:bg-blue-700 nav-link" data-section="employees-section">Employees</a>
-                <a href="#billing" class="block px-4 py-2 rounded-lg hover:bg-blue-700 nav-link" data-section="billing-section">Billing</a>
-                <a href="#analytics" class="block px-4 py-2 rounded-lg hover:bg-blue-700 nav-link" data-section="analytics-section">Analytics</a>
+                <a href="#billing" class="block px-4 py-2 rounded-lg hover:bg-blue-700 nav-link" data-section="billing-section">Billing & Invoices</a>
+                <div class="relative">
+                    <a href="#analytics" class="block px-4 py-2 rounded-lg hover:bg-blue-700 nav-link flex items-center justify-between" data-section="analytics-section">
+                        <span>Analytics</span>
+                        <svg class="w-5 h-5 transform rotate-0" id="analytics-dropdown-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </a>
+                    <div class="analytics-submenu pl-6 mt-1 space-y-1 hidden">
+                        <a href="#" class="block px-4 py-2 rounded-lg hover:bg-blue-700 analytics-nav-item" data-type="sales">Sales Analytics</a>
+                        <a href="#" class="block px-4 py-2 rounded-lg hover:bg-blue-700 analytics-nav-item" data-type="inventory">Inventory Analytics</a>
+                        <a href="#" class="block px-4 py-2 rounded-lg hover:bg-blue-700 analytics-nav-item" data-type="customer">Customer Analytics</a>
+                    </div>
+                </div>
             </nav>
             <div class="mt-auto">
                 <p class="text-sm">Logged in as: <span id="user-name" class="font-semibold">Admin</span></p>
@@ -119,15 +132,15 @@
                     <div class="flex items-center">
                         <div class="w-12 h-12 bg-gray-300 rounded-full mr-4"></div>
                         <div>
-                            <h3 class="text-lg font-semibold text-blue-700">John Doe <span class="text-sm text-blue-600">Shop Owner</span></h3>
+                            <h3 class="text-lg font-semibold text-blue-700">Amit Sharma <span class="text-sm text-blue-600">Shop Owner</span></h3>
                             <p class="text-sm text-gray-600"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a3c9cccbcd8dc7ccc6e3c6dbc2ced3cfc68dc0ccce">[email&#160;protected]</a></p>
-                            <p class="text-sm text-gray-600">+1 (655) 123-4567</p>
-                            <p class="text-sm text-gray-600">New York, USA</p>
+                            <p class="text-sm text-gray-600">+91 9310365505</p>
+                            <p class="text-sm text-gray-600">New Delhi, India</p>
                         </div>
                     </div>
                     <div class="text-right">
-                        <p class="text-green-600 text-sm">Active Today at 3:45 PM</p>
-                        <p class="text-gray-500 text-xs">Last active: Today at 4:45 PM</p>
+                        <p class="text-green-600 text-sm">Active Today at 9:35 AM</p>
+                        <p class="text-gray-500 text-xs">Last active: Today at 4:45 AM</p>
                         <button class="text-blue-600 text-sm mt-2 hover:underline">Edit Profile</button>
                     </div>
                 </div>
@@ -136,8 +149,8 @@
                     <div class="bg-white p-6 rounded-lg shadow-md flex items-center justify-between card">
                         <div>
                             <h3 class="text-lg font-semibold text-gray-700">Total Sales</h3>
-                            <p id="total-sales" class="text-2xl font-bold text-gray-900 mt-2">$0.00</p>
-                            <p class="text-green-600 text-sm">+12.3% vs. last period</p>
+                            <p id="total-sales" class="text-2xl font-bold text-gray-900 mt-2">₹0.00</p>
+                            
                         </div>
                         <span class="text-2xl text-gray-400">💰</span>
                     </div>
@@ -145,7 +158,7 @@
                         <div>
                             <h3 class="text-lg font-semibold text-gray-700">Total Inventory</h3>
                             <p id="total-inventory" class="text-2xl font-bold text-gray-900 mt-2">0</p>
-                            <p class="text-green-600 text-sm">+2.3% vs. last period</p>
+                            
                         </div>
                         <span class="text-2xl text-gray-400">📦</span>
                     </div>
@@ -153,15 +166,15 @@
                         <div>
                             <h3 class="text-lg font-semibold text-gray-700">Total Customers</h3>
                             <p id="total-customers" class="text-2xl font-bold text-gray-900 mt-2">0</p>
-                            <p class="text-green-600 text-sm">+4.7% vs. last period</p>
+                          
                         </div>
                         <span class="text-2xl text-gray-400">👥</span>
                     </div>
                     <div class="bg-white p-6 rounded-lg shadow-md flex items-center justify-between card">
                         <div>
                             <h3 class="text-lg font-semibold text-gray-700">Average Order Value</h3>
-                            <p id="average-order-value" class="text-2xl font-bold text-gray-900 mt-2">$0.00</p>
-                            <p class="text-red-600 text-sm">-1.2% vs. last period</p>
+                            <p id="average-order-value" class="text-2xl font-bold text-gray-900 mt-2">₹0.00</p>
+                           
                         </div>
                         <span class="text-2xl text-gray-400">🛒</span>
                     </div>
@@ -325,7 +338,7 @@
                         <div class="flex space-x-4">
                             <div class="sales-metric">
                                 <h3 class="text-sm font-semibold text-gray-600">Total Sales</h3>
-                                <p id="total-sales-sales" class="text-2xl font-bold text-gray-900">$0.00</p>
+                                <p id="total-sales-sales" class="text-2xl font-bold text-gray-900">₹0.00</p>
                             </div>
                             <div class="sales-metric">
                                 <h3 class="text-sm font-semibold text-gray-600">Total Orders</h3>
@@ -333,7 +346,7 @@
                             </div>
                             <div class="sales-metric">
                                 <h3 class="text-sm font-semibold text-gray-600">Average Order</h3>
-                                <p id="average-order" class="text-2xl font-bold text-gray-900">$0.00</p>
+                                <p id="average-order" class="text-2xl font-bold text-gray-900">₹0.00</p>
                             </div>
                             <div class="sales-metric">
                                 <h3 class="text-sm font-semibold text-gray-600">Completion Rate</h3>
@@ -404,7 +417,7 @@
                             </div>
                             <div class="sales-metric">
                                 <h3 class="text-sm font-semibold text-gray-600">Avg. Spent</h3>
-                                <p id="avg-spent-metric" class="text-2xl font-bold text-gray-900">$0.00</p>
+                                <p id="avg-spent-metric" class="text-2xl font-bold text-gray-900">₹0.00</p>
                             </div>
                         </div>
                         <input id="search-customers" type="text" placeholder="Search customers..." class="border-2 border-gray-300 p-2 rounded-lg w-1/3 focus:outline-none focus:border-blue-500">
@@ -576,21 +589,200 @@
 
             <!-- Billing Section -->
             <div id="billing-section" class="section">
-                <h2 class="text-3xl font-bold mb-6 text-gray-800">Billing</h2>
+                <h2 class="text-3xl font-bold mb-6 text-gray-800">Billing & Invoices</h2>
+                <p class="text-gray-600 mb-6">Manage your invoices and payment records</p>
                 <div class="spinner hidden"></div>
-                <div class="bg-white p-4 rounded-lg shadow-md card">
-                    <h3 class="text-lg font-semibold text-blue-600">Invoice List</h3>
+                
+                <!-- Metrics -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md flex flex-col card">
+                        <h3 class="text-sm font-medium text-gray-500">Total Revenue</h3>
+                        <p id="total-revenue" class="text-2xl font-bold text-gray-900 mt-2">₹0.00</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md flex flex-col card">
+                        <h3 class="text-sm font-medium text-gray-500">Pending</h3>
+                        <p id="pending-amount" class="text-2xl font-bold text-gray-900 mt-2">₹0.00</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md flex flex-col card">
+                        <h3 class="text-sm font-medium text-gray-500">Overdue</h3>
+                        <p id="overdue-amount" class="text-2xl font-bold text-gray-900 mt-2">₹0.00</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md flex flex-col card">
+                        <h3 class="text-sm font-medium text-gray-500">Invoices</h3>
+                        <p id="total-invoices" class="text-2xl font-bold text-gray-900 mt-2">0</p>
+                    </div>
+                </div>
+                
+                <!-- Invoice List -->
+                <div class="bg-white p-6 rounded-lg shadow-md card">
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="flex items-center">
+                            <div class="relative">
+                                <input id="search-invoices" type="text" placeholder="Search invoices..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <div class="absolute left-3 top-2.5">
+                                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <select id="filter-invoices" class="py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="all">All Statuses</option>
+                                    <option value="paid">Paid</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="overdue">Overdue</option>
+                                    <option value="draft">Draft</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <button id="export-btn" class="bg-white border border-gray-300 text-gray-700 mr-2 px-4 py-2 rounded-lg flex items-center hover:bg-gray-50">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                </svg>
+                                Export
+                            </button>
+                            <button id="new-invoice-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-700">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                New Invoice
+                            </button>
+                        </div>
+                    </div>
+                    
                     <table class="w-full mt-4">
                         <thead>
-                            <tr class="bg-blue-100 text-gray-700">
-                                <th class="p-2 text-left">Customer ID</th>
-                                <th class="p-2 text-left">Total</th>
-                                <th class="p-2 text-left">Discount</th>
-                                <th class="p-2 text-left">Date</th>
+                            <tr class="bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th class="p-3">Invoice #</th>
+                                <th class="p-3">Customer</th>
+                                <th class="p-3">Issue Date</th>
+                                <th class="p-3">Due Date</th>
+                                <th class="p-3">Amount</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3"></th>
                             </tr>
                         </thead>
-                        <tbody id="invoices-list"></tbody>
+                        <tbody id="invoices-list" class="bg-white divide-y divide-gray-200"></tbody>
                     </table>
+                </div>
+                
+                <!-- Invoice Detail Modal -->
+                <div id="view-invoice-detail-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+                    <div class="bg-white p-6 rounded-lg shadow-xl w-2/3 max-w-3xl">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold">Invoice Details</h3>
+                            <button id="close-invoice-detail-modal" class="text-gray-400 hover:text-gray-500">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <p class="text-gray-500 text-sm">Invoice Number</p>
+                                <p id="invoice-detail-number" class="font-medium"></p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500 text-sm">Status</p>
+                                <p><span id="invoice-detail-status" class="px-2 py-1 rounded-full text-xs font-medium"></span></p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500 text-sm">Customer</p>
+                                <p id="invoice-detail-customer" class="font-medium"></p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500 text-sm">Issue Date</p>
+                                <p id="invoice-detail-date" class="font-medium"></p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500 text-sm">Due Date</p>
+                                <p id="invoice-detail-due-date" class="font-medium"></p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500 text-sm">Amount</p>
+                                <p id="invoice-detail-amount" class="font-medium"></p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500 text-sm">Discount</p>
+                                <p id="invoice-detail-discount" class="font-medium"></p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500 text-sm">Total</p>
+                                <p id="invoice-detail-total" class="font-medium"></p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-end space-x-2">
+                            <button class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-50">
+                                <svg class="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                                </svg>
+                                Print
+                            </button>
+                            <button class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-50">
+                                <svg class="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                </svg>
+                                Download PDF
+                            </button>
+                            <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                <svg class="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                                Send Invoice
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Add/Edit Invoice Modal -->
+                <div id="add-invoice-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+                    <div class="bg-white p-6 rounded-lg shadow-xl w-1/2 max-w-xl">
+                        <h3 id="invoice-modal-title" class="text-xl font-bold mb-4">Create New Invoice</h3>
+                        <input type="hidden" id="invoice-id">
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">Customer ID</label>
+                            <input type="number" id="invoice-customer-id" class="w-full border-2 border-gray-300 p-2 rounded-lg" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">Amount</label>
+                            <input type="number" step="0.01" id="invoice-amount" class="w-full border-2 border-gray-300 p-2 rounded-lg" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">Discount</label>
+                            <input type="number" step="0.01" id="invoice-discount" class="w-full border-2 border-gray-300 p-2 rounded-lg" value="0">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">Invoice Date</label>
+                            <input type="date" id="invoice-date" class="w-full border-2 border-gray-300 p-2 rounded-lg" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">Due Date</label>
+                            <input type="date" id="invoice-due-date" class="w-full border-2 border-gray-300 p-2 rounded-lg" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">Status</label>
+                            <select id="invoice-status" class="w-full border-2 border-gray-300 p-2 rounded-lg">
+                                <option value="Pending">Pending</option>
+                                <option value="Paid">Paid</option>
+                                <option value="Overdue">Overdue</option>
+                                <option value="Draft">Draft</option>
+                            </select>
+                        </div>
+                        
+                        <div class="flex justify-end mt-6">
+                            <button id="cancel-add-invoice" class="bg-gray-300 text-gray-700 px-4 py-2 rounded mr-2 hover:bg-gray-400">Cancel</button>
+                            <button id="save-invoice-btn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Save Invoice</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -598,9 +790,191 @@
             <div id="analytics-section" class="section">
                 <h2 class="text-3xl font-bold mb-6 text-gray-800">Analytics</h2>
                 <div class="spinner hidden"></div>
-                <div class="bg-white p-4 rounded-lg shadow-md card">
-                    <h3 class="text-lg font-semibold text-blue-600">Sales Trends</h3>
-                    <canvas id="analytics-chart" class="mt-4"></canvas>
+                
+                <!-- Analytics Navigation -->
+                <div class="bg-white p-4 rounded-lg shadow-md mb-6 card">
+                    <div class="flex space-x-6 border-b pb-3">
+                        <button id="sales-analytics-btn" class="analytics-tab text-blue-600 font-medium border-b-2 border-blue-600 pb-2" data-target="sales">Sales Analytics</button>
+                        <button id="inventory-analytics-btn" class="analytics-tab text-gray-500 hover:text-gray-700" data-target="inventory">Inventory Analytics</button>
+                        <button id="customer-analytics-btn" class="analytics-tab text-gray-500 hover:text-gray-700" data-target="customer">Customer Analytics</button>
+                    </div>
+                </div>
+                
+                <!-- Sales Analytics Section -->
+                <div id="sales-analytics-content" class="analytics-content sales-analytics">
+                    <h3 class="text-xl font-semibold mb-2 text-gray-800">Sales Analytics</h3>
+                    <p class="text-gray-600 mb-4">Detailed view of your sales performance over time</p>
+                    
+                    <!-- Sales Metrics -->
+                    <div class="grid grid-cols-3 gap-4 mb-4">
+                        <div class="bg-white p-4 rounded-lg shadow-md flex flex-col card">
+                            <h3 class="text-sm font-medium text-gray-500">Total Revenue</h3>
+                            <p id="total-revenue" class="text-2xl font-bold text-gray-900 mt-1">₹48,550</p>
+                            <div class="flex items-center mt-1">
+                                <span id="growth-indicator" class="text-green-500">
+                                    <i class="fas fa-arrow-up mr-1"></i>
+                                </span>
+                                <span id="growth-percentage" class="text-green-500">12.0%</span>
+                                <span class="text-gray-500 text-xs ml-1">vs. last month</span>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-md flex flex-col card">
+                            <h3 class="text-sm font-medium text-gray-500">Average Order Value</h3>
+                            <p id="average-order" class="text-2xl font-bold text-gray-900 mt-1">₹275.84</p>
+                            <p class="text-sm text-green-500 mt-0">+3.2% from last month</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-md flex flex-col card">
+                            <h3 class="text-sm font-medium text-gray-500">Conversion Rate</h3>
+                            <p id="conversion-rate" class="text-2xl font-bold text-gray-900 mt-1">3.8%</p>
+                            <p class="text-sm text-red-500 mt-0">-0.5% from last month</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Sales Charts -->
+                    <div class="grid grid-cols-2 gap-6 mb-6">
+                        <div class="bg-white p-4 rounded-lg shadow-md card">
+                            <h3 class="text-lg font-semibold mb-2">Monthly Sales Performance</h3>
+                            <canvas id="monthly-sales-chart" class="w-full"></canvas>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-md card">
+                            <h3 class="text-lg font-semibold mb-2">Top Selling Products</h3>
+                            <canvas id="top-products-chart" class="w-full"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Inventory Analytics Section -->
+                <div id="inventory-analytics-content" class="analytics-content hidden inventory-analytics">
+                    <h3 class="text-xl font-semibold mb-2 text-gray-800">Inventory Analytics</h3>
+                    <p class="text-gray-600 mb-4">Detailed view of your inventory levels and stock status</p>
+                    
+                    <!-- Inventory Metrics -->
+                    <div class="grid grid-cols-3 gap-4 mb-4">
+                        <div class="bg-white p-4 rounded-lg shadow-md flex flex-col card">
+                            <h3 class="text-sm font-medium text-gray-500">Total Products</h3>
+                            <p id="total-products" class="text-2xl font-bold text-gray-900 mt-1">148</p>
+                            <p class="text-sm text-green-500 mt-0">+8 new this month</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-md flex flex-col card">
+                            <h3 class="text-sm font-medium text-gray-500">Low Stock Items</h3>
+                            <p id="low-stock" class="text-2xl font-bold text-gray-900 mt-1">12</p>
+                            <p class="text-sm text-red-500 mt-0">4 require immediate attention</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-md flex flex-col card">
+                            <h3 class="text-sm font-medium text-gray-500">Inventory Value</h3>
+                            <p id="inventory-value" class="text-2xl font-bold text-gray-900 mt-1">₹124,500</p>
+                            <p class="text-sm text-green-500 mt-0">+5.2% from last month</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Inventory Charts -->
+                    <div class="grid grid-cols-2 gap-6 mb-6">
+                        <div class="bg-white p-4 rounded-lg shadow-md card">
+                            <h3 class="text-lg font-semibold mb-2">Product Categories Distribution</h3>
+                            <canvas id="category-distribution-chart" class="w-full"></canvas>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-md card">
+                            <h3 class="text-lg font-semibold mb-2">Stock Levels</h3>
+                            <table id="stock-levels-table" class="w-full mt-4">
+                                <thead>
+                                    <tr class="text-xs font-semibold text-gray-500 bg-gray-100">
+                                        <th class="px-4 py-2 text-left">Product</th>
+                                        <th class="px-4 py-2 text-left">Category</th>
+                                        <th class="px-4 py-2 text-right">Price</th>
+                                        <th class="px-4 py-2 text-right">Stock</th>
+                                        <th class="px-4 py-2 text-right">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="text-xs border-b border-gray-200">
+                                        <td colspan="5" class="px-4 py-2 text-center">Loading stock levels...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Stock Status -->
+                    <div class="grid grid-cols-2 gap-6 mb-6">
+                        <div class="bg-white p-4 rounded-lg shadow-md card">
+                            <h3 class="text-lg font-semibold mb-2">Stock Status</h3>
+                            <div class="flex justify-between items-center mt-4">
+                                <div>
+                                    <p class="text-sm text-gray-500">In Stock</p>
+                                    <p id="in-stock-percentage" class="text-lg font-bold">85.5%</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500">Out of Stock</p>
+                                    <p id="out-of-stock-percentage" class="text-lg font-bold">14.5%</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Customer Analytics Section -->
+                <div id="customer-analytics-content" class="analytics-content hidden customer-analytics">
+                    <h3 class="text-xl font-semibold mb-2 text-gray-800">Customer Analytics</h3>
+                    <p class="text-gray-600 mb-4">Insights into your customer demographics and behavior</p>
+                    
+                    <!-- Customer Metrics -->
+                    <div class="grid grid-cols-3 gap-4 mb-4">
+                        <div class="bg-white p-4 rounded-lg shadow-md flex flex-col card">
+                            <h3 class="text-sm font-medium text-gray-500">Total Customers</h3>
+                            <p id="total-customers" class="text-2xl font-bold text-gray-900 mt-1">350</p>
+                            <p class="text-sm text-green-500 mt-0">+40 from last month</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-md flex flex-col card">
+                            <h3 class="text-sm font-medium text-gray-500">Active Customers</h3>
+                            <p id="active-customers" class="text-2xl font-bold text-gray-900 mt-1">275</p>
+                            <p class="text-sm text-green-500 mt-0">78.6% of total</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-md flex flex-col card">
+                            <h3 class="text-sm font-medium text-gray-500">Repeat Purchase Rate</h3>
+                            <p id="repeat-rate" class="text-2xl font-bold text-gray-900 mt-1">68%</p>
+                            <p class="text-sm text-green-500 mt-0">+5% from last quarter</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Customer Charts -->
+                    <div class="grid grid-cols-2 gap-6 mb-6">
+                        <div class="bg-white p-4 rounded-lg shadow-md card">
+                            <h3 class="text-lg font-semibold mb-2">Customer Growth</h3>
+                            <canvas id="customer-growth-chart" class="w-full"></canvas>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-md card">
+                            <h3 class="text-lg font-semibold mb-2">Top Customers by Spending</h3>
+                            <canvas id="top-customers-chart" class="w-full"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-6 mb-6">
+                        <div class="bg-white p-4 rounded-lg shadow-md card">
+                            <h3 class="text-lg font-semibold mb-2">Customer Age Distribution</h3>
+                            <canvas id="age-distribution-chart" class="w-full"></canvas>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-md card">
+                            <h3 class="text-lg font-semibold mb-2">Customer Metrics</h3>
+                            <div class="mt-4 space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-600">Total Spent</span>
+                                    <span id="total-spent" class="text-gray-900 font-medium">₹185,400</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-600">Average Spent</span>
+                                    <span id="avg-spent" class="text-gray-900 font-medium">₹530</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-600">Total Orders</span>
+                                    <span id="total-orders" class="text-gray-900 font-medium">1,245</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-600">Lifetime Value</span>
+                                    <span id="avg-lifetime-value" class="text-gray-900 font-medium">₹1,254</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
