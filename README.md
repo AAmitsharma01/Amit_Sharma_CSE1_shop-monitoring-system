@@ -1,8 +1,32 @@
-<<<<<<< HEAD
+# Amit_Sharma_CSE1_shop-monitoring-system
+
 # Shop Monitoring System
 
-A web-based shop monitoring system built with Node.js, Express, SQLite, and vanilla JavaScript.
+## Project Title
+**Shop Monitoring System**
 
+## Team Members
+Amit Sharma
+Aaryan Sharma
+Keyur Mishra
+Prabhat Tripathi
+
+
+
+
+
+## Short Project Description
+The **Shop Monitoring System** is a web-based application that helps in tracking and managing shop inventory, sales, and products. It allows users to monitor and manage the shop's performance, ensuring efficiency and accuracy in stock management.
+
+## Link to Video Explanation
+[https://drive.google.com/drive/folders/1zWvz2kYMF7AxLZ1Xy6NFHLSu8v45mdPl?usp=sharing]
+
+## Technologies Used
+- **HTML**
+- **CSS**
+- **JavaScript**
+- **SQLite3**
+- **Express.js** (for the server)
 ## Setup Instructions
 
 1. Make sure you have Node.js installed on your system.
@@ -55,4 +79,4 @@ If you encounter any issues:
 3. Clear your browser cache and try again
 =======
 # AAmitsharma01-Amit_Sharma_CSE1_shop-monitoring-system
->>>>>>> 4627474e45ab27255df49e1cab79b28beb4d9cd7
+
