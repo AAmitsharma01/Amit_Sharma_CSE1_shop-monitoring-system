@@ -78,5 +78,5 @@ If you encounter any issues:
 2. Ensure the server is running (check for any errors in the console)
 3. Clear your browser cache and try again
 =======
-# AAmitsharma01-Amit_Sharma_CSE1_shop-monitoring-system
+
 
