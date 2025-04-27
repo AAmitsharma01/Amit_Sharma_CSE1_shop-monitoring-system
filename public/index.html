@@ -1,0 +1,616 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Monitoring System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Main App -->
+    <div id="app" class="flex">
+        <!-- Sidebar -->
+        <div class="sidebar w-64 bg-gradient-to-b from-blue-800 to-blue-600 text-white p-6 fixed h-screen">
+            <h1 class="text-2xl font-bold mb-8">Shop Monitor</h1>
+            <nav>
+                <a href="#dashboard" class="block px-4 py-2 rounded-lg hover:bg-blue-700 nav-link" data-section="dashboard-section">Dashboard</a>
+                <a href="#inventory" class="block px-4 py-2 rounded-lg hover:bg-blue-700 nav-link" data-section="inventory-section">Inventory</a>
+                <a href="#sales" class="block px-4 py-2 rounded-lg hover:bg-blue-700 nav-link" data-section="sales-section">Sales</a>
+                <a href="#customers" class="block px-4 py-2 rounded-lg hover:bg-blue-700 nav-link" data-section="customers-section">Customers</a>
+                <a href="#employees" class="block px-4 py-2 rounded-lg hover:bg-blue-700 nav-link" data-section="employees-section">Employees</a>
+                <a href="#billing" class="block px-4 py-2 rounded-lg hover:bg-blue-700 nav-link" data-section="billing-section">Billing</a>
+                <a href="#analytics" class="block px-4 py-2 rounded-lg hover:bg-blue-700 nav-link" data-section="analytics-section">Analytics</a>
+            </nav>
+            <div class="mt-auto">
+                <p class="text-sm">Logged in as: <span id="user-name" class="font-semibold">Admin</span></p>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content ml-64 p-6 flex-1 bg-gray-50">
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="section active">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800">Dashboard</h2>
+                <p class="text-gray-600 mb-6">Get an overview of your shop's performance</p>
+                <div class="spinner hidden"></div>
+                <!-- User Profile -->
+                <div class="bg-white p-6 rounded-lg shadow-md mb-6 flex items-center justify-between card">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gray-300 rounded-full mr-4"></div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-blue-700">John Doe <span class="text-sm text-blue-600">Shop Owner</span></h3>
+                            <p class="text-sm text-gray-600"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a3c9cccbcd8dc7ccc6e3c6dbc2ced3cfc68dc0ccce">[email&#160;protected]</a></p>
+                            <p class="text-sm text-gray-600">+1 (655) 123-4567</p>
+                            <p class="text-sm text-gray-600">New York, USA</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-green-600 text-sm">Active Today at 3:45 PM</p>
+                        <p class="text-gray-500 text-xs">Last active: Today at 4:45 PM</p>
+                        <button class="text-blue-600 text-sm mt-2 hover:underline">Edit Profile</button>
+                    </div>
+                </div>
+                <!-- Metrics -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md flex items-center justify-between card">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-700">Total Sales</h3>
+                            <p id="total-sales" class="text-2xl font-bold text-gray-900 mt-2">$0.00</p>
+                            <p class="text-green-600 text-sm">+12.3% vs. last period</p>
+                        </div>
+                        <span class="text-2xl text-gray-400">💰</span>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md flex items-center justify-between card">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-700">Total Inventory</h3>
+                            <p id="total-inventory" class="text-2xl font-bold text-gray-900 mt-2">0</p>
+                            <p class="text-green-600 text-sm">+2.3% vs. last period</p>
+                        </div>
+                        <span class="text-2xl text-gray-400">📦</span>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md flex items-center justify-between card">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-700">Total Customers</h3>
+                            <p id="total-customers" class="text-2xl font-bold text-gray-900 mt-2">0</p>
+                            <p class="text-green-600 text-sm">+4.7% vs. last period</p>
+                        </div>
+                        <span class="text-2xl text-gray-400">👥</span>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md flex items-center justify-between card">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-700">Average Order Value</h3>
+                            <p id="average-order-value" class="text-2xl font-bold text-gray-900 mt-2">$0.00</p>
+                            <p class="text-red-600 text-sm">-1.2% vs. last period</p>
+                        </div>
+                        <span class="text-2xl text-gray-400">🛒</span>
+                    </div>
+                </div>
+                <!-- Charts -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md card">
+                        <h3 class="text-lg font-semibold text-gray-700">Revenue Overview</h3>
+                        <div class="flex justify-end mb-2">
+                            <select class="border border-gray-300 p-1 rounded">
+                                <option>Area</option>
+                                <option>Bar</option>
+                            </select>
+                        </div>
+                        <canvas id="revenue-chart" class="mt-4"></canvas>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md card">
+                        <h3 class="text-lg font-semibold text-gray-700">Performance</h3>
+                        <div class="mt-4 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600">Conversion Rate</span>
+                                <div class="w-1/2 bg-gray-200 rounded-full h-2.5">
+                                    <div class="bg-blue-600 h-2.5 rounded-full" style="width: 5.8%"></div>
+                                </div>
+                                <span class="text-gray-900 font-medium">5.8%</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600">Customer Retention</span>
+                                <div class="w-1/2 bg-gray-200 rounded-full h-2.5">
+                                    <div class="bg-blue-600 h-2.5 rounded-full" style="width: 42%"></div>
+                                </div>
+                                <span class="text-gray-900 font-medium">42%</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600">Cart Abandonment</span>
+                                <div class="w-1/2 bg-gray-200 rounded-full h-2.5">
+                                    <div class="bg-red-600 h-2.5 rounded-full" style="width: 18%"></div>
+                                </div>
+                                <span class="text-gray-900 font-medium">18%</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600">Sales Growth</span>
+                                <div class="w-1/2 bg-gray-200 rounded-full h-2.5">
+                                    <div class="bg-green-600 h-2.5 rounded-full" style="width: 12.5%"></div>
+                                </div>
+                                <span class="text-gray-900 font-medium">12.5%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Recent Sales -->
+                <div class="bg-white p-6 rounded-lg shadow-md mb-6 card">
+                    <h3 class="text-lg font-semibold text-gray-700">Recent Sales</h3>
+                    <table class="w-full mt-4">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-700">
+                                <th class="p-2 text-left">Product</th>
+                                <th class="p-2 text-left">Quantity</th>
+                                <th class="p-2 text-left">Total</th>
+                                <th class="p-2 text-left">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-sales"></tbody>
+                    </table>
+                </div>
+                <!-- Low Stock -->
+                <div class="bg-white p-6 rounded-lg shadow-md card">
+                    <h3 class="text-lg font-semibold text-gray-700">Low Stock</h3>
+                    <table class="w-full mt-4">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-700">
+                                <th class="p-2 text-left">Product</th>
+                                <th class="p-2 text-left">Category</th>
+                                <th class="p-2 text-left">Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody id="low-stock"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Inventory Section -->
+            <div id="inventory-section" class="section">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800">Inventory</h2>
+                <div class="spinner hidden"></div>
+                <div class="bg-white p-4 rounded-lg shadow-md mb-6 card">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-blue-600">Manage your product stock</h3>
+                        <button id="add-product-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200">Add Product</button>
+                    </div>
+                    <div class="flex justify-between items-center mb-4">
+                        <input id="search-products" type="text" placeholder="Search products..." class="border-2 border-gray-300 p-2 rounded-lg w-1/3 focus:outline-none focus:border-blue-500">
+                        <div>
+                            <select id="category-filter" class="border-2 border-gray-300 p-2 rounded-lg focus:outline-none focus:border-blue-500">
+                                <option value="">All Categories</option>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Audio">Audio</option>
+                                <option value="Computers">Computers</option>
+                                <option value="Tablets">Tablets</option>
+                                <option value="Wearables">Wearables</option>
+                            </select>
+                        </div>
+                    </div>
+                    <table class="w-full mt-4">
+                        <thead>
+                            <tr class="bg-blue-100 text-gray-700">
+                                <th class="p-2 text-left">Product</th>
+                                <th class="p-2 text-left">Category</th>
+                                <th class="p-2 text-left">Price</th>
+                                <th class="p-2 text-left">Stock</th>
+                                <th class="p-2 text-left">Status</th>
+                                <th class="p-2 text-left"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-list"></tbody>
+                    </table>
+                </div>
+                <!-- Add/Edit Product Modal -->
+                <div id="add-product-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+                    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                        <h3 id="modal-title" class="text-lg font-semibold text-blue-600 mb-4">Add New Product</h3>
+                        <div class="grid grid-cols-1 gap-4">
+                            <input id="product-id" type="hidden">
+                            <input id="product-name" type="text" placeholder="Product Name" class="border-2 border-gray-300 p-3 rounded-lg focus:outline-none focus:border-blue-500">
+                            <input id="product-category" type="text" placeholder="Category" class="border-2 border-gray-300 p-3 rounded-lg focus:outline-none focus:border-blue-500">
+                            <input id="product-quantity" type="number" placeholder="Quantity" class="border-2 border-gray-300 p-3 rounded-lg focus:outline-none focus:border-blue-500">
+                            <input id="product-price" type="number" step="0.01" placeholder="Price" class="border-2 border-gray-300 p-3 rounded-lg focus:outline-none focus:border-blue-500">
+                            <input id="product-expiration" type="date" placeholder="Expiration Date" class="border-2 border-gray-300 p-3 rounded-lg focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div class="flex justify-end mt-6">
+                            <button id="cancel-add-product" class="mr-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition duration-200">Cancel</button>
+                            <button id="save-product-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200">Save</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- View Details Modal -->
+                <div id="view-product-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+                    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                        <h3 class="text-lg font-semibold text-blue-600 mb-4">Product Details</h3>
+                        <div class="grid grid-cols-1 gap-4">
+                            <p><strong>Name:</strong> <span id="view-product-name"></span></p>
+                            <p><strong>Category:</strong> <span id="view-product-category"></span></p>
+                            <p><strong>Price:</strong> <span id="view-product-price"></span></p>
+                            <p><strong>Quantity:</strong> <span id="view-product-quantity"></span></p>
+                            <p><strong>Expiration Date:</strong> <span id="view-product-expiration"></span></p>
+                        </div>
+                        <div class="flex justify-end mt-6">
+                            <button id="close-view-product" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition duration-200">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sales Section -->
+            <div id="sales-section" class="section">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800">Sales</h2>
+                <p class="text-gray-600 mb-6">View and manage sales transactions</p>
+                <div class="spinner hidden"></div>
+                <div class="bg-white p-4 rounded-lg shadow-md mb-6 card">
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="flex space-x-4">
+                            <div class="sales-metric">
+                                <h3 class="text-sm font-semibold text-gray-600">Total Sales</h3>
+                                <p id="total-sales-sales" class="text-2xl font-bold text-gray-900">$0.00</p>
+                            </div>
+                            <div class="sales-metric">
+                                <h3 class="text-sm font-semibold text-gray-600">Total Orders</h3>
+                                <p id="total-orders" class="text-2xl font-bold text-gray-900">0</p>
+                            </div>
+                            <div class="sales-metric">
+                                <h3 class="text-sm font-semibold text-gray-600">Average Order</h3>
+                                <p id="average-order" class="text-2xl font-bold text-gray-900">$0.00</p>
+                            </div>
+                            <div class="sales-metric">
+                                <h3 class="text-sm font-semibold text-gray-600">Completion Rate</h3>
+                                <p id="completion-rate" class="text-2xl font-bold text-gray-900">0%</p>
+                            </div>
+                        </div>
+                        <button id="export-sales" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200">Export</button>
+                    </div>
+                    <div class="flex justify-between items-center mb-4">
+                        <input id="search-sales" type="text" placeholder="Search orders..." class="border-2 border-gray-300 p-2 rounded-lg w-1/3 focus:outline-none focus:border-blue-500">
+                        <select id="filter-sales" class="border-2 border-gray-300 p-2 rounded-lg focus:outline-none focus:border-blue-500">
+                            <option value="">All Statuses</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Refunded">Refunded</option>
+                            <option value="Canceled">Canceled</option>
+                        </select>
+                    </div>
+                    <table class="w-full mt-4">
+                        <thead>
+                            <tr class="bg-blue-100 text-gray-700">
+                                <th class="p-2 text-left">Order #</th>
+                                <th class="p-2 text-left">Customer ID</th>
+                                <th class="p-2 text-left">Date</th>
+                                <th class="p-2 text-left">Amount</th>
+                                <th class="p-2 text-left">Items</th>
+                                <th class="p-2 text-left">Status</th>
+                                <th class="p-2 text-left"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="sales-list"></tbody>
+                    </table>
+                </div>
+                <!-- View Invoice Modal -->
+                <div id="view-invoice-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+                    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                        <h3 class="text-lg font-semibold text-blue-600 mb-4">Invoice Details</h3>
+                        <div id="invoice-details" class="grid grid-cols-1 gap-4"></div>
+                        <div class="flex justify-end mt-6">
+                            <button id="close-view-invoice" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition duration-200">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customers Section -->
+            <div id="customers-section" class="section">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800">Customers</h2>
+                <div class="spinner hidden"></div>
+                <div class="bg-white p-4 rounded-lg shadow-md card">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-blue-600">View and manage customer relationships</h3>
+                        <button id="add-customer-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200">Add Customer</button>
+                    </div>
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="flex space-x-6">
+                            <div class="sales-metric">
+                                <h3 class="text-sm font-semibold text-gray-600">Total Customers</h3>
+                                <p id="total-customers-metric" class="text-2xl font-bold text-gray-900">0</p>
+                            </div>
+                            <div class="sales-metric">
+                                <h3 class="text-sm font-semibold text-gray-600">Active Customers</h3>
+                                <p id="active-customers-metric" class="text-2xl font-bold text-gray-900">0</p>
+                            </div>
+                            <div class="sales-metric">
+                                <h3 class="text-sm font-semibold text-gray-600">Total Orders</h3>
+                                <p id="total-orders-metric" class="text-2xl font-bold text-gray-900">0</p>
+                            </div>
+                            <div class="sales-metric">
+                                <h3 class="text-sm font-semibold text-gray-600">Avg. Spent</h3>
+                                <p id="avg-spent-metric" class="text-2xl font-bold text-gray-900">$0.00</p>
+                            </div>
+                        </div>
+                        <input id="search-customers" type="text" placeholder="Search customers..." class="border-2 border-gray-300 p-2 rounded-lg w-1/3 focus:outline-none focus:border-blue-500">
+                    </div>
+                    <table class="w-full mt-4">
+                        <thead>
+                            <tr class="bg-blue-100 text-gray-700">
+                                <th class="p-2 text-left">Customer</th>
+                                <th class="p-2 text-left">Contact</th>
+                                <th class="p-2 text-left">Orders</th>
+                                <th class="p-2 text-left">Total Spent</th>
+                                <th class="p-2 text-left">Last Purchase</th>
+                                <th class="p-2 text-left">Status</th>
+                                <th class="p-2 text-left"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="customers-list"></tbody>
+                    </table>
+                </div>
+                <!-- Add/Edit Customer Modal -->
+                <div id="add-customer-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+                    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                        <h3 id="customer-modal-title" class="text-lg font-semibold text-blue-600 mb-4">Add New Customer</h3>
+                        <div class="grid grid-cols-1 gap-4">
+                            <input id="customer-id" type="hidden">
+                            <input id="customer-name" type="text" placeholder="Customer Name" class="border-2 border-gray-300 p-3 rounded-lg focus:outline-none focus:border-blue-500">
+                            <input id="customer-email" type="email" placeholder="Email" class="border-2 border-gray-300 p-3 rounded-lg focus:outline-none focus:border-blue-500">
+                            <input id="customer-phone" type="tel" placeholder="Phone" class="border-2 border-gray-300 p-3 rounded-lg focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div class="flex justify-end mt-6">
+                            <button id="cancel-add-customer" class="mr-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition duration-200">Cancel</button>
+                            <button id="save-customer-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200">Save</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- View Details Modal -->
+                <div id="view-customer-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+                    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                        <h3 class="text-lg font-semibold text-blue-600 mb-4">Customer Details</h3>
+                        <div class="grid grid-cols-1 gap-4">
+                            <p><strong>Name:</strong> <span id="view-customer-name"></span></p>
+                            <p><strong>Email:</strong> <span id="view-customer-email"></span></p>
+                            <p><strong>Phone:</strong> <span id="view-customer-phone"></span></p>
+                            <p><strong>Orders:</strong> <span id="view-customer-orders"></span></p>
+                            <p><strong>Total Spent:</strong> <span id="view-customer-total-spent"></span></p>
+                            <p><strong>Last Purchase:</strong> <span id="view-customer-last-purchase"></span></p>
+                            <p><strong>Status:</strong> <span id="view-customer-status"></span></p>
+                        </div>
+                        <div class="flex justify-end mt-6">
+                            <button id="close-view-customer" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition duration-200">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employees Section -->
+<div id="employees-section" class="section hidden flex-1 p-6 overflow-auto">
+    <div class="flex justify-between items-center mb-4">
+        <div>
+            <h2 class="text-3xl font-bold mb-2 text-gray-800">Employees</h2>
+            <p class="text-gray-600">Manage your store staff and their roles</p>
+        </div>
+        <button id="add-employee-btn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">+ Add Employee</button>
+    </div>
+
+    <!-- Metrics -->
+    <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="bg-white p-4 rounded shadow">
+            <p class="text-gray-600">Total Employees</p>
+            <p id="total-employees-metric" class="text-2xl font-bold">50</p>
+        </div>
+        <div class="bg-white p-4 rounded shadow">
+            <p class="text-gray-600">Active Employees</p>
+            <p id="active-employees-metric" class="text-2xl font-bold">39</p>
+        </div>
+        <div class="bg-white p-4 rounded shadow">
+            <p class="text-gray-600">Departments</p>
+            <p id="departments-metric" class="text-2xl font-bold">13</p>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="flex justify-between mb-4">
+        <input type="text" id="search-employees" placeholder="Search employees..." class="border p-2 rounded w-1/3">
+        <select id="filter-employees" class="border p-2 rounded">
+            <option value="">Filter</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+        </select>
+    </div>
+
+    <!-- Employees Table -->
+    <div class="bg-white p-4 rounded-lg shadow-md card">
+        <h3 class="text-lg font-semibold text-blue-600">Employee List</h3>
+        <table class="w-full mt-4">
+            <thead>
+                <tr class="bg-blue-100 text-gray-700">
+                    <th class="p-2 text-left">Employee</th>
+                    <th class="p-2 text-left">Role</th>
+                    <th class="p-2 text-left">Department</th>
+                    <th class="p-2 text-left">Today's Status</th>
+                    <th class="p-2 text-left">Join Date</th>
+                    <th class="p-2 text-left">Status</th>
+                    <th class="p-2 text-left"></th>
+                </tr>
+            </thead>
+            <tbody id="employees-list"></tbody>
+        </table>
+    </div>
+
+    <!-- Spinner -->
+    <div class="spinner fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+    </div>
+
+    <!-- Add/Edit Employee Modal -->
+    <div id="add-employee-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded shadow-lg w-1/3">
+            <h3 id="employee-modal-title" class="text-xl font-bold mb-4">Add New Employee</h3>
+            <input type="hidden" id="employee-id">
+            <div class="mb-4">
+                <label class="block text-gray-700">Name</label>
+                <input type="text" id="employee-name" class="border p-2 w-full rounded" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Email</label>
+                <input type="email" id="employee-email" class="border p-2 w-full rounded" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Phone</label>
+                <input type="text" id="employee-phone" class="border p-2 w-full rounded">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Role</label>
+                <input type="text" id="employee-role" class="border p-2 w-full rounded" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Department</label>
+                <input type="text" id="employee-department" class="border p-2 w-full rounded" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Join Date</label>
+                <input type="date" id="employee-join-date" class="border p-2 w-full rounded" required>
+            </div>
+            <div class="flex justify-end">
+                <button id="cancel-add-employee" class="bg-gray-500 text-white px-4 py-2 rounded mr-2 hover:bg-gray-600">Cancel</button>
+                <button id="save-employee-btn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Profile Modal -->
+    <div id="view-profile-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded shadow-lg w-1/3">
+            <h3 class="text-xl font-bold mb-4">Employee Profile</h3>
+            <p><strong>Name:</strong> <span id="view-profile-name"></span></p>
+            <p><strong>Email:</strong> <span id="view-profile-email"></span></p>
+            <p><strong>Phone:</strong> <span id="view-profile-phone"></span></p>
+            <p><strong>Role:</strong> <span id="view-profile-role"></span></p>
+            <p><strong>Department:</strong> <span id="view-profile-department"></span></p>
+            <p><strong>Join Date:</strong> <span id="view-profile-join-date"></span></p>
+            <p><strong>Today's Attendance:</strong> <span id="view-profile-today-status"></span></p>
+            <h4 class="font-bold mt-4">Past Attendance Record</h4>
+            <ul id="view-profile-past-attendance"></ul>
+            <button id="close-view-profile" class="mt-4 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Close</button>
+        </div>
+    </div>
+</div>
+
+            <!-- Billing Section -->
+            <div id="billing-section" class="section">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800">Billing</h2>
+                <div class="spinner hidden"></div>
+                <div class="bg-white p-4 rounded-lg shadow-md card">
+                    <h3 class="text-lg font-semibold text-blue-600">Invoice List</h3>
+                    <table class="w-full mt-4">
+                        <thead>
+                            <tr class="bg-blue-100 text-gray-700">
+                                <th class="p-2 text-left">Customer ID</th>
+                                <th class="p-2 text-left">Total</th>
+                                <th class="p-2 text-left">Discount</th>
+                                <th class="p-2 text-left">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invoices-list"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Analytics Section -->
+            <div id="analytics-section" class="section">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800">Analytics</h2>
+                <div class="spinner hidden"></div>
+                <div class="bg-white p-4 rounded-lg shadow-md card">
+                    <h3 class="text-lg font-semibold text-blue-600">Sales Trends</h3>
+                    <canvas id="analytics-chart" class="mt-4"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+    <script>
+        window.onload = () => {
+            initializeApp();
+        };
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93690048d904addb',t:'MTc0NTcwMTEzNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></html>
